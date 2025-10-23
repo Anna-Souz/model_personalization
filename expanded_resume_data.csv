@@ -1,0 +1,6 @@
+Education,Years_of_Experience,Project_Count,Domain,Skills,Certifications,Skill_Level,Question_Type
+Bachelor,0,1,Embedded Systems,"C,Matlab",None,Beginner,Basic Programming
+Bachelor,2,3,Web Development,"HTML,CSS,JS",None,Intermediate,Web App Challenge
+Master,4,5,AI,"Python,ML",TensorFlow Certified,Intermediate,Machine Learning Problem
+PhD,6,8,AI,"Python,Deep Learning",TensorFlow Certified,Advanced,Research Paper Replication
+Bachelor,1,2,Cloud Computing,"AWS,Docker",AWS Certified,Intermediate,Cloud Deployment Challenge

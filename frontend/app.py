@@ -1,28 +1,32 @@
-import os
 import streamlit as st
 import requests
 
 st.set_page_config(page_title="Resume Bandit Tester", page_icon="🤖", layout="centered")
-
 st.title("🎯 Personalized Resume Bandit – Testing UI")
 
-# ✅ Use environment variable first, fallback to your Render URL
-base_url = os.getenv("BACKEND_URL", "https://model-personalization-1.onrender.com/")
-
-# Optional: allow tester to override manually
-base_url = st.text_input("Enter FastAPI Base URL", base_url)
+# -------------------------------
+# Base API URL input
+# -------------------------------
+base_url = st.text_input("Enter FastAPI Base URL", "http://127.0.0.1:8000")
 
 st.subheader("🧍 Candidate Profile")
-name = st.text_input("Name", "Arihant")
+
+# -------------------------------
+# Candidate inputs
+# -------------------------------
+name = st.text_input("Name")
 education = st.selectbox("Education", ["Diploma", "Bachelor", "Master", "PhD"])
-experience = st.number_input("Years of Experience", 0, 15, 2)
-projects = st.number_input("Project Count", 0, 20, 3)
-domain = st.selectbox("Domain", ["AI", "Web Development", "Cloud Computing", "Embedded Systems", "Software Engineering"])
-skills = st.text_input("Skills (comma separated)", "Python,ML")
-certs = st.text_input("Certifications", "Google AI Certified")
+experience = st.number_input("Years of Experience", min_value=0, max_value=50, value=2)
+projects = st.number_input("Project Count", min_value=0, max_value=50, value=3)
+domain = st.text_input("Domain")
+skills = st.text_input("Skills (comma separated)")
+certs = st.text_input("Certifications")
 level = st.selectbox("Skill Level", ["Beginner", "Intermediate", "Advanced"])
 fatigue = st.selectbox("Fatigue", ["low", "medium", "high"])
 
+# -------------------------------
+# Button to call API
+# -------------------------------
 if st.button("🚀 Generate Personalized Question"):
     payload = {
         "Name": name,
@@ -30,14 +34,14 @@ if st.button("🚀 Generate Personalized Question"):
         "Years_of_Experience": experience,
         "Project_Count": projects,
         "Domain": domain,
-        "Skills": [s.strip() for s in skills.split(",")],
+        "Skills": [s.strip() for s in skills.split(",") if s.strip()],
         "Certifications": certs,
         "Skill_Level": level,
         "Fatigue": fatigue
     }
+
     try:
-        # Ensure no trailing slash duplication
-        res = requests.post(f"{base_url.rstrip('/')}/generate_question", json=payload, timeout=30)
+        res = requests.post(f"{base_url}/generate_question", json=payload)
         if res.status_code == 200:
             data = res.json()
             st.success("✅ Question Generated!")
@@ -49,6 +53,6 @@ if st.button("🚀 Generate Personalized Question"):
             st.write("\n".join(data["rationale"]))
             st.metric("Reward", data["reward"])
         else:
-            st.error(f"API Error: {res.text}")
+            st.error(f"API Error ({res.status_code}): {res.text}")
     except Exception as e:
         st.error(f"Connection failed: {e}")
