@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import requests
 
@@ -5,7 +6,11 @@ st.set_page_config(page_title="Resume Bandit Tester", page_icon="🤖", layout="
 
 st.title("🎯 Personalized Resume Bandit – Testing UI")
 
-base_url = st.text_input("Enter FastAPI Base URL", "http://127.0.0.1:8000")
+# ✅ Use environment variable first, fallback to your Render URL
+base_url = os.getenv("BACKEND_URL", "https://model-personalization-1.onrender.com/")
+
+# Optional: allow tester to override manually
+base_url = st.text_input("Enter FastAPI Base URL", base_url)
 
 st.subheader("🧍 Candidate Profile")
 name = st.text_input("Name", "Arihant")
@@ -31,7 +36,8 @@ if st.button("🚀 Generate Personalized Question"):
         "Fatigue": fatigue
     }
     try:
-        res = requests.post(f"{base_url}/generate_question", json=payload)
+        # Ensure no trailing slash duplication
+        res = requests.post(f"{base_url.rstrip('/')}/generate_question", json=payload, timeout=30)
         if res.status_code == 200:
             data = res.json()
             st.success("✅ Question Generated!")
